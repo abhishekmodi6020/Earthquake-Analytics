@@ -32,7 +32,6 @@ def bulkinsert():
           connection.commit()
     return render_template('index.html')
 
-
 @app.route('/')
 def index():
   return render_template('index.html')
@@ -89,7 +88,7 @@ def kmeans():
     for row in rows:
         x_ip.append(row[0])
         y_ip.append(row[1])
-    
+
     # print('\nPCLASS --------',pclass)
     # print('\nsurvival --------',survival)
     # print('\nage --------',age)
