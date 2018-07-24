@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Plot</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.js"></script>
+
+    <link rel="stylesheet" href="../static/styles.css" type="text/css">
+
+  </head>
+  <body>
+  <div id="chartContainer2">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dimple/2.3.0/dimple.latest.js"></script></script>
+    <script type="text/javascript">
+    var svg = dimple.newSvg("#chartContainer2", 590, 400);
+      var data = {{data | tojson | safe}}
+      var myChart = new dimple.chart(svg, data);
+      myChart.setBounds(75, 30, 480, 330)
+      myChart.addMeasureAxis("x", "COUNT");
+      var y = myChart.addCategoryAxis("y", "MAG1");
+      y.addOrderRule("Date");
+      myChart.addSeries(null, dimple.plot.bar);
+      myChart.draw();
+
+  </script>
+</div>
+
+  </body>
+</html>

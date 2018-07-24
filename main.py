@@ -4,75 +4,97 @@ import sqlite3 as sql
 import numpy as np
 # import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
+import csv
 import math
 import itertools
 import time
+import pyodbc
+
+server = 'abhisheksql.database.windows.net'
+database = 'database'
+username = 'abhishek'
+password = 'Sql#2018'
+driver= '{ODBC Driver 13 for SQL Server}'
+connection = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
+cursor = connection.cursor()
+
+@app.route('/bulkinsert',  methods=['POST','GET'])
+def bulkinsert():
+    query = "INSERT INTO dbo.EARTHQUAKE (TIME,LATITUDE,LONGITUDE,DEPTH,MAG,MAGTYPE,NST,GAP,DMIN,RMS,NET,ID,UPDATED,PLACE,TYPE,HORIZONTALERROR,DEPTHERROR,MAGERROR,MAGNST,STATUS,LOCATIONSOURCE,MAGSOURCE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+    with open('all_month.csv',newline='') as csvfile:
+          next(csvfile)
+          reader = csv.reader(csvfile, delimiter=',')
+          print(reader)
+          for row in reader:
+              print('\nrow :',row)
+              cursor.execute(query,row)
+
+          connection.commit()
+    return render_template('index.html')
+
 
 @app.route('/')
 def index():
   return render_template('index.html')
 
-@app.route('/createtable', methods=['POST'])
-def createtable():
-    try:
-        connection = sql.connect('database.db')
-        # connection.execute('CREATE TABLE "TITANIC" ("PCLASS" INTEGER, "SURVIVED" INTEGER, "NAME" TEXT, "SEX" TEXT, "AGE" NUMERIC, "SIBSP" INTEGER, "PARCH" INTEGER, "TICKET" TEXT, "FARE" REAL, "CABIN" TEXT, "EMBARKED" TEXT, "BOAT" TEXT, "BODY" INTEGER, "HOME.DEST" TEXT)')
+@app.route('/page1')
+def page1():
+    return render_template('page1.html')
 
-        connection.execute('CREATE TABLE "MINNOW" ( "CABINNUM" INTEGER, "FNAME" TEXT, "LNAME" TEXT, "AGE" NUMERIC, "SURVIVED" TEXT, "LAT" REAL, "LONG" REAL, "PICTURECAP" BLOB, "PICTUREPAS" BLOB, "FARE" REAL )')
+@app.route('/magcase',methods=['POST','GET'])
+def magcase():
+    starttime = time.time()
+    ip1 = request.form['ip1']
+    ip2 = request.form['ip2']
+    ip3 = request.form['ip3']
 
-        connection.close()
-        print('Table created')
-    except:
-        print('some error in table creation')
+    ip1 = round(float(ip1),1)
+    ip2 = round(float(ip2),1)
+    ip3 = round(float(ip3),1)
+    casestr = ""
+    i = ip1
+    while i<ip2:
+        casestr = casestr+"when MAG between "+str(i)+" and "+str(i+ip3)+" then '"+str(i)+" and "+str(i+ip3)+"' \n"
+        i = i+ip3
 
-    # try:
-    #     connection = sql.connect('database.db')
-    #     try:
-    #         df = pandas.read('C://Users//abhis//Desktop//titanic3.csv')
-    #     except:
-    #         print("oops")
-    #     df.to_sql("TITANIC", connection, if_exists='append', index=False)
-    #     print('Data inserted')
-    # except:
-    #     print('insertion error')
-        connection.close()
-    return render_template('index.html')
+    print(casestr)
+
+    query = "SELECT CASE "+casestr+" END AS MAG1,COUNT(*) AS A from all_month WHERE MAG>="+str(ip1)+" and MAG<="+str(ip2)+" GROUP BY case "+casestr+" END;"
+    cursor.execute(query)
+    rows=cursor.fetchall()
+
+    data = []
+    for i in rows:
+        data.append({'MAG1':i[0],'COUNT':i[1]})
+    print(data)
+    endtime = time.time()
+    totaltime = endtime - starttime
+    return render_template('tp.html',data=data)
+
 
 @app.route('/kmeans',methods=['POST','GET'])
 def kmeans():
-    no_of_cluster = request.form['no_of_cluster']
-    connection = sql.connect('database.db')
-    connection.row_factory = sql.Row
-    cur = connection.cursor()
-    query = "select * from titanic"
-    cur.execute(query)
-    rows = cur.fetchall()
-    pclass = []
-    boat = []
-    survival = []
-    age = []
-    fare = []
+    no_of_cluster = request.form['ip1']
+    query = "select latitude, longitude from all_month"
+    cursor.execute(query)
+    rows = cursor.fetchall()
+
+    x_ip = []
+    y_ip = []
+    # pclass = []
+    # boat = []
+    # survival = []
+    # age = []
+    # fare = []
     for row in rows:
-        pclass.append(row["PCLASS"])
-        survival.append(row["SURVIVED"])
-        if row["BOAT"] == '':
-            boat.append(0)
-        else:
-            boat.append(row["BOAT"])
-        if row["AGE"] == '':
-            age.append(0)
-        else:
-            age.append(row["AGE"])
-        if row["FARE"] == '':
-            fare.append(0)
-        else:
-            fare.append(row["FARE"])
-    connection.close()
+        x_ip.append(row[0])
+        y_ip.append(row[1])
+    
     # print('\nPCLASS --------',pclass)
     # print('\nsurvival --------',survival)
     # print('\nage --------',age)
 
-    X = np.array(list(zip(age[:len(age)-1], fare[:len(fare)-1])))
+    X = np.array(list(zip(x_ip[:len(x_ip)], y_ip[:len(y_ip)])))
     print('\n\n X -------------------------------------',X)
 
     km = KMeans(n_clusters=int(no_of_cluster))
@@ -86,7 +108,7 @@ def kmeans():
     # for i in range(len(X)):
     #     plt.plot(X[i][0], X[i][1], colors[labels[i]], markersize = 10)
     # plt.scatter(centroids[:,0],centroids[:,1],marker = "x", s = 150, linewidths=5, zorder = 10)
-    displaylist = list(zip(age,fare,labels))
+    displaylist = list(zip(x_ip,y_ip,labels))
     # print('\n\nDisplay List------------------------------------', displaylist)
     dist_list = []
     for i in range(0,len(centroids)-1):

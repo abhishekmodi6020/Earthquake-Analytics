@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>k - means</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="row">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-4">
+          <table class="table-striped" class="tmargin">
+            <thead>
+              <tr>
+                <th style="padding: 5px"> X </th>
+                <th style="padding: 5px"> Y </th>
+                <th style="padding: 5px"> Cluster it Belongs to </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in allrows %}
+              <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <br>
+
+          <a href="/" class="tmargin">
+            <button  type="button" class="btn btn-default pull-left" name="Back">Back</button>
+          </a>
+        </div>
+        <div class="col-sm-1"></div>
+        <div class="col-sm-6">
+          <h3>Time taken: {{finaltime}}
+          </h3>
+          <br>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>centroids</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for i in cent %}
+              <tr>
+                <td>{{ i[0] }}, {{i[1]}}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+
+          <table class="table-striped" class="tmargin">
+            <thead>
+              <tr>
+                <th style="padding: 5px"> Centroid 1 </th>
+                <th style="padding: 5px"> Centroid 2</th>
+                <th style="padding: 5px"> Distance </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in range(dist_length) %}
+              <tr>
+                <td>{{ distances[i][0][0] }}, {{distances[i][1][0]}}</td>
+                <td>{{ distances[i][0][1] }}, {{distances[i][1][1]}}</td>
+                <td>{{ distances[i][0][2] }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <br><br><br>
+
+
+          {% for label in range(length_label) %}
+          <h3>Cluster Label :{{ label }}</h3>
+          <h4>Total Count: {{ len_values[label] }}</h4>
+          <table class="table-striped" class="tmargin">
+            <thead>
+              <tr>
+                <th>X</th>
+                <th>Y</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for j in range(len_values[label])%}
+              <tr>
+                <td class="col-md-2">{{label_n_values[label][j][0]}}</td>
+                <td class="col-md-2">{{label_n_values[label][j][1]}}</td>
+              </tr>
+              {%endfor%}
+            </tbody>
+          </table>
+          {% endfor %}
+
+        </div>
+    </div>
+
+  </body>
+</html>
