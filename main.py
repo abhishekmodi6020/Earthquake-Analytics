@@ -53,8 +53,8 @@ def magcase():
     casestr = ""
     i = ip1
     while i<ip2:
-        casestr = casestr+"when MAG between "+str(i)+" and "+str(i+ip3)+" then '"+str(i)+" and "+str(i+ip3)+"' \n"
-        i = i+ip3
+        casestr = casestr+"when MAG between "+str(i)+" and "+str(round(i+ip3,1))+" then '"+str(i)+" and "+str(round(i+ip3,1))+"' \n"
+        i = round(i+ip3,1)
 
     print(casestr)
 
@@ -68,8 +68,7 @@ def magcase():
     print(data)
     endtime = time.time()
     totaltime = endtime - starttime
-    return render_template('tp.html',data=data)
-
+    return render_template('magcase.html',data=data)
 
 @app.route('/kmeans',methods=['POST','GET'])
 def kmeans():
@@ -80,18 +79,10 @@ def kmeans():
 
     x_ip = []
     y_ip = []
-    # pclass = []
-    # boat = []
-    # survival = []
-    # age = []
-    # fare = []
+
     for row in rows:
         x_ip.append(row[0])
         y_ip.append(row[1])
-
-    # print('\nPCLASS --------',pclass)
-    # print('\nsurvival --------',survival)
-    # print('\nage --------',age)
 
     X = np.array(list(zip(x_ip[:len(x_ip)], y_ip[:len(y_ip)])))
     print('\n\n X -------------------------------------',X)
@@ -124,7 +115,7 @@ def kmeans():
 
     print(dist_list)
     dist_len = len(dist_list)
-
+    colors = [(255,0,0),(0,255,0),(0,0,255),(180,60,0),(60,180,0),(0,60,180),(180,0,150),(0,150,180),(150,150,0),(60,60,60)]
 
     #   Storing in dict as (key)label: (value)all x,y's of that label
     label_n_values = {i: X[np.where(labels == i)] for i in range(km.n_clusters)}
@@ -133,11 +124,13 @@ def kmeans():
     len_values = []                         #   count of all values of single single label's
     # eg:len_values = [[32],[10],[4],[70]]    ...i.e lengths of 4 labels
 
+    colors = colors[:length_label]
+
     for i in range(len(label_n_values)):
        len_values.append(len(label_n_values[i]))
     # plt.show()
 
-    return render_template('clustering.html', allrows = displaylist, distances = dist_list, dist_length=dist_len, length_label = length_label, len_values = len_values, label_n_values = label_n_values)
+    return render_template('clustering.html', allrows = displaylist, distances = dist_list, dist_length=dist_len, length_label = length_label, len_values = len_values, label_n_values = label_n_values,colors = colors)
 
 if __name__ == '__main__':
    app.run(debug = True)

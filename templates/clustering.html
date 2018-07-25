@@ -4,9 +4,37 @@
     <meta charset="utf-8">
     <title>k - means</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+    <link rel="stylesheet" href="../static/styles.css" type="text/css">
   </head>
   <body>
+    <div class="row">
+      <div class="col-sm-1"></div>
+      <div class="col-sm-8">
+        <canvas id="scatter-chart" width="900" height="600"></canvas>
+        <script type="text/javascript">
+        new Chart(document.getElementById("scatter-chart"), {
+          type: 'scatter',
+          data:{
+      			datasets: [
+              {% for label in range(length_label) %}
+              {
+      				label: ["{{label}}"],
+      				borderColor: "rgb{{colors[label]}}",
+      				backgroundColor: "white",
+      				data: [
+                {% for j in range(len_values[label])%}
+                  {x: {{label_n_values[label][j][0]}}, y:{{label_n_values[label][j][1]}} },
+                {% endfor %}
+              ]
+              },
+              {% endfor %}
+            ]
+          }
+        });
+        </script>
+      </div>
+    </div>
     <div class="row">
         <div class="col-sm-1"></div>
         <div class="col-sm-4">
