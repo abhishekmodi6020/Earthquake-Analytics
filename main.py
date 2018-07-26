@@ -10,10 +10,10 @@ import itertools
 import time
 import pyodbc
 
-server = 'abhisheksql.database.windows.net'
+server = 'something'
 database = 'database'
-username = 'abhishek'
-password = 'Sql#2018'
+username = 'something'
+password = 'something'
 driver= '{ODBC Driver 13 for SQL Server}'
 connection = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
 cursor = connection.cursor()
