@@ -1,11 +1,4 @@
-# Python Flask app on Azure App Service Web
-
-This is a minimal sample app that demonstrates how to run a Python Flask application on Azure App Service Web.
-
-This repository can directly be deployed to Azure App Service.
-
-For more information, please see the [Python on App Service Quickstart docs](https://docs.microsoft.com/en-us/azure/app-service-web/app-service-web-get-started-python).
-
-# Contributing
-
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+• Successfully developed a Website on Azure cloud that performs various complex queries on large scale USGS Earthquake Dataset implemented on Azure SQL.
+• Implemented K-Means clustering and developed plots on ChartJS that resulted in better understanding of data.
+• Implemented Caching for Faster execution of queries which improved the performance of the system by 40%
+• Auto-Scaled the website to dynamically add/remove instances of the resources for matching performance requirements. Performed Load Testing using Apache Jmeter.
